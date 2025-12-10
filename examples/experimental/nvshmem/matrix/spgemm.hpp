@@ -153,8 +153,8 @@ void gemm_mpi_simple(BCL::cuda::SPMatrix<T, index_type>& a,
       if (c.tile_rank({i, j}) == BCL::rank()) {
         using csr_type = decltype(a.arget_tile_exp({0, 0}).get());
         std::vector<csr_type> intermediate_results;
-        // fprintf(stderr, "RANK(%lu): Doing tile (%lu, %lu)\n", BCL::rank(), i, j);
         for (size_t k = 0; k < a.grid_shape()[1]; k++) {
+          BCL::print("Iteration %d\n", k);
           auto begin = std::chrono::high_resolution_clock::now();
           MPI_Comm row_comm = a.row_teams_mpi_[i][0].comm();
           MPI_Comm column_comm = b.column_teams_mpi_[j][0].comm();

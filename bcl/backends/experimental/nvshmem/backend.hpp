@@ -69,7 +69,7 @@ inline void init() {
   cudaSetDevice(BCL::rank() % device_count);
   BCL::barrier();
 
-  size_t max_memory_gb = 16;
+  size_t max_memory_gb = 40;
 
   for (size_t i = max_memory_gb; i >= 1; i--) {
     size_t gb = 1000*1000*1000;

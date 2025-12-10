@@ -85,6 +85,7 @@ int main(int argc, char** argv) {
   BCL::barrier();
   auto begin = std::chrono::high_resolution_clock::now();
   BCL::cuda::gemm<T, index_type, allocator_type>(a, b, c);
+  //BCL::cuda::gemm_mpi_simple<T, index_type, allocator_type>(a, b, c);
   auto end = std::chrono::high_resolution_clock::now();
   double duration = std::chrono::duration<double>(end - begin).count();
 
