@@ -344,9 +344,9 @@ void CSRMatrix<T, index_type, Allocator>::read_MatrixMarket(const std::string& f
       j--;
     }
 
-    if ((i == i0 && j < j0) || i < i0) {
-      throw std::runtime_error("CSRMatrix::read_MatrixMarket " + fname + " is not sorted.");
-    }
+    //if ((i == i0 && j < j0) || i < i0) {
+    //  throw std::runtime_error("CSRMatrix::read_MatrixMarket " + fname + " is not sorted.");
+    //}
     i0 = i;
     j0 = j;
 

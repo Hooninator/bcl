@@ -64,6 +64,9 @@ void gemm(BCL::cuda::SPMatrix<T, index_type>& a, BCL::cuda::SPMatrix<T, index_ty
         std::vector<csr_type> intermediate_results;
 
         for (size_t k_ = 0; k_ < a.grid_shape()[1]; k_++) {
+          
+          BCL::print("Iteration %d\n", k_);
+
           size_t k = (k_ + k_offset) % a.grid_shape()[1];
 
           begin = std::chrono::high_resolution_clock::now();
@@ -84,7 +87,7 @@ void gemm(BCL::cuda::SPMatrix<T, index_type>& a, BCL::cuda::SPMatrix<T, index_ty
 
           begin = std::chrono::high_resolution_clock::now();
 
-          auto result_c = spgemm_cusparse(local_a, local_b);
+          auto result_c = spgemm_cusparse_newapi(local_a, local_b);
           end = std::chrono::high_resolution_clock::now();
           duration_compute += std::chrono::duration<double>(end - begin).count();
 
@@ -226,7 +229,7 @@ void gemm_mpi_simple(BCL::cuda::SPMatrix<T, index_type>& a,
           // *** Local MatMul ***
 
           begin = std::chrono::high_resolution_clock::now();
-          auto result_c = spgemm_cusparse(local_a, local_b);
+          auto result_c = spgemm_cusparse_newapi(local_a, local_b);
           end = std::chrono::high_resolution_clock::now();
           duration_compute += std::chrono::duration<double>(end - begin).count();
 
@@ -485,7 +488,7 @@ void gemm_cusp(BCL::cuda::SPMatrix<T, index_type>& a, BCL::cuda::SPMatrix<T, ind
           }
 
           begin = std::chrono::high_resolution_clock::now();
-          // auto result_c = spgemm_cusparse<T, index_type, Allocator>(local_a, local_b);
+          // auto result_c = spgemm_cusparse_newapi<T, index_type, Allocator>(local_a, local_b);
           // TODO: is in-place accumulation during SPGEMM the best option?
           spgemm_cusp(local_a, local_b, result_c);
 
@@ -539,7 +542,7 @@ void gemm_aowns_simple(BCL::cuda::SPMatrix<T, index_type>& a, BCL::cuda::SPMatri
         for (size_t j = 0; j < c.grid_shape()[1]; j++) {
           auto local_b = b.arget_tile_exp({k, j}).get();
 
-          auto result_c = spgemm_cusparse(local_a, local_b);
+          auto result_c = spgemm_cusparse_newapi(local_a, local_b);
 
           queue_type& queue = queues[c.tile_rank({i, j})];
           queue.push({BCL::cuda::__to_cuda_gptr<T>(result_c.values_data()),
@@ -636,7 +639,7 @@ void gemm_aowns(BCL::cuda::SPMatrix<T, index_type>& a, BCL::cuda::SPMatrix<T, in
           }
 
           begin = std::chrono::high_resolution_clock::now();
-          auto result_c = spgemm_cusparse(local_a, local_b);
+          auto result_c = spgemm_cusparse_newapi(local_a, local_b);
           end = std::chrono::high_resolution_clock::now();
           duration_compute += std::chrono::duration<double>(end - begin).count();
 
@@ -737,7 +740,7 @@ void gemm_aowns_ws(BCL::cuda::SPMatrix<T, index_type>& a, BCL::cuda::SPMatrix<T,
             duration_sync += std::chrono::duration<double>(end - begin).count();
 
             begin = std::chrono::high_resolution_clock::now();
-            auto result_c = spgemm_cusparse(local_a, local_b);
+            auto result_c = spgemm_cusparse_newapi(local_a, local_b);
             end = std::chrono::high_resolution_clock::now();
             duration_compute += std::chrono::duration<double>(end - begin).count();
 
@@ -789,7 +792,7 @@ void gemm_aowns_ws(BCL::cuda::SPMatrix<T, index_type>& a, BCL::cuda::SPMatrix<T,
         duration_sync += std::chrono::duration<double>(end - begin).count();
 
         begin = std::chrono::high_resolution_clock::now();
-        auto result_c = spgemm_cusparse(local_a, local_b);
+        auto result_c = spgemm_cusparse_newapi(local_a, local_b);
         end = std::chrono::high_resolution_clock::now();
         duration_compute += std::chrono::duration<double>(end - begin).count();
 

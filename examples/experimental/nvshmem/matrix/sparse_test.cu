@@ -21,7 +21,6 @@
 #include "spgemm.hpp"
 
 #include <chrono>
-#include <essl.h>
 
 template <typename T, typename U>
 struct PairHash {
@@ -55,6 +54,7 @@ int main(int argc, char** argv) {
   BCL::cuda::SPMatrix<T, index_type> b(fname, std::move(blocks[1]));
   BCL::cuda::SPMatrix<T, index_type> c(m, n, std::move(blocks[2]));
 
+
   BCL::print("Info:\n");
   if (BCL::rank() == 0) {
     printf("A:\n");
@@ -68,7 +68,7 @@ int main(int argc, char** argv) {
   cusparseStatus_t status = cusparseCreate(&BCL::cuda::bcl_cusparse_handle_);
   BCL::cuda::throw_cusparse(status);
 
-  // printf("A taking %lf GB, B %lf GB\n", 1.0e-9*a.my_mem(), 1.0e-9*b.my_mem());
+  printf("A taking %lf GB, B %lf GB\n", 1.0e-9*a.my_mem(), 1.0e-9*b.my_mem());
 
   assert(a.grid_shape()[1] == b.grid_shape()[0]);
 
@@ -144,7 +144,7 @@ int main(int argc, char** argv) {
 
     auto local_a = BCL::cuda::to_gpu<T, index_type, allocator_type>(mat);
 
-    auto s_c = spgemm_cusparse(local_a, local_a);
+    auto s_c = spgemm_cusparse_newapi(local_a, local_a);
 
     fprintf(stderr, "Getting COO...\n");
     auto local_c = c.get().get_coo();
