@@ -327,6 +327,11 @@ mmread(std::string fname, bool one_indexed = true) {
       matrix.insert({{j, i}, v});
     }
 
+    //if (c % 10000 == 0)
+    //{
+    //    printf("%d\n", c);
+    //    fflush(stdout);
+    //}
     c++;
     if (c > nnz) {
       throw std::runtime_error("read_MatrixMarket: error reading Matrix Market file, file has more nonzeros than reported.");
